@@ -8,8 +8,6 @@
 #include <sstream>
 #include <algorithm>
 #include <vector>
-// CoreAssert
-#include "CoreAssert/CoreAssert.h"
 // CoreString
 #include "CoreString_Utils.h"
 
@@ -35,6 +33,22 @@ namespace Private_Join
         std::stringstream ss;
         ss << value << separator;
         return ss.str();
+    }
+}
+
+namespace Private_Format
+{
+    //--------------------------------------------------------------------------
+    // Reference:
+    //   https://msdn.microsoft.com/en-us/magazine/dn913181.aspx
+    //   As usual Kenny Kerr is awesome!
+    template <typename T>
+    T Argument(T value) noexcept { return value; }
+
+    template <typename T>
+    T const* Argument(const std::basic_string<T> &value) noexcept
+    {
+        return value.c_str();
     }
 }
 
@@ -189,6 +203,7 @@ bool EndsWith(
     bool               caseSensitive = true);
 
 
+///-----------------------------------------------------------------------------
 /// @brief
 ///   Replaces the format item in a specified string with the string
 ///   representation of a corresponding object in a specified array.
@@ -197,7 +212,22 @@ bool EndsWith(
 template <typename... Args>
 std::string Format(const std::string &str, Args ...args)
 {
+    using namespace Private_Format;
 
+    //COWTODO(n2omatt): Performance is trash here because we're allocating
+    // and release memory everytime that we do a format.
+    // This works for now, but I need research a little further to learn
+    // how to make this better.
+    char *buf = nullptr;
+    if(sizeof...(args) == 0)
+        return str;
+
+    asprintf(&buf, str.c_str(), Argument(args) ...);
+
+    std::string ret_str(buf);
+    free(buf);
+
+    return ret_str;
 }
 
 
