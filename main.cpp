@@ -1,5 +1,13 @@
+// std
 #include <iostream>
+// CoreString
 #include "CoreString/CoreString.h"
+
+//------------------------------------------------------------------------------
+// Make easier to users use CoreString repository by now making them borther
+// with the multiple main functions, while still let us have some "tests"
+#define CORESTRING_TESTS_ENABLED 0
+#if CORESTRING_TESTS_ENABLED
 
 int main() {
     using namespace std;
@@ -153,3 +161,4 @@ int main() {
 
     return 0;
 }
+#endif // #if CORESTRING_TESTS_ENABLED
