@@ -1,4 +1,7 @@
+// Header
 #include "../include/CoreString.h"
+// CoreAssert
+#include "CoreAssert/CoreAssert.h"
 
 
 //------------------------------------------------------------------------------
@@ -37,7 +40,42 @@ size_t CoreString::Count(
     size_t             start /* = 0                 */,
     size_t             end   /* = std::string::npos */)
 {
-    //COWTODO(n2omatt): Implement....
+    COREASSERT_ASSERT(
+        start >= 0 && start < haystack.size(),
+        "start(%d) index isn't in haystack(%s) bounds[0, %d)",
+        start,
+        haystack.c_str(),
+        haystack.size()
+    );
+
+    //--------------------------------------------------------------------------
+    // Helper checks.
+    if(needle.size() > haystack.size()) return 0;
+    if(haystack.empty())                return 0;
+    if(needle  .empty())                return 0;
+
+    auto count       = 0;
+    auto start_index = start;
+    auto end_index   = end;
+
+    // Clamp the range.
+    if(start + end >= haystack.size())
+        end_index = haystack.size() - start;
+
+    while(true)
+    {
+        if(start_index == std::string::npos)
+            return count;
+
+        start_index = haystack.find_first_of(
+            needle.c_str(),
+            start_index,
+            end_index
+        );
+    }
+
+    // Just to let the compilers happy...
+    return 0;
 }
 
 
@@ -140,14 +178,9 @@ bool IsSpace(const std::string &str)
 
 
 //------------------------------------------------------------------------------
-/// @brief
-///   Return True if S is a titlecased string and there is at least one
-///   character in S, i.e. uppercase characters may only follow uncased
-///   characters and lowercase characters only cased ones. Return False
-///   otherwise.
 bool CoreString::IsTitle(const std::string &str)
 {
-    //COWTODO(n2omatt): Implement....
+    //COWTODO(n2omatt): implemnet...
 }
 
 
@@ -192,7 +225,26 @@ std::string CoreString::SwapCase(const std::string &str)
 ///   characters, all remaining cased characters have lowercase.
 std::string CoreString::Title(const std::string &str)
 {
-    //COWTODO(n2omatt): Implement....
+    if(str.empty())
+        return str;
+
+    auto title_str  = str;
+    auto need_upper = true;
+
+    for(auto &c : title_str)
+    {
+        if(need_upper)
+        {
+            c = toupper(c);
+            need_upper = false;
+
+            continue;
+        }
+
+        c = tolower(c);
+    }
+
+    return title_str;
 }
 
 

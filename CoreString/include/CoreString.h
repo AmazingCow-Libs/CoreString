@@ -166,7 +166,6 @@ std::string Concat(const T& first, const Args&... args)
     return Concat(first) +  Concat(args...);
 }
 
-
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Returns a value indicating whether a specified substring
