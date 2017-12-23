@@ -426,6 +426,10 @@ std::vector<std::string> Split(
     const std::string &str,
     const std::string &chars);
 
+///-----------------------------------------------------------------------------
+/// @brief Same as Split with a char array (as a string)
+/// but only with one char.
+std::vector<std::string> Split(const std::string &str, char c);
 
 ///-----------------------------------------------------------------------------
 /// @brief

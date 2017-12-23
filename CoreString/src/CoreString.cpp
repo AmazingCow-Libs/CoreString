@@ -474,6 +474,11 @@ std::vector<std::string> CoreString::Split(
     return vec;
 }
 
+//------------------------------------------------------------------------------
+std::vector<std::string> CoreString::Split(const std::string &str, char c)
+{
+    return CoreString::Split(str, std::string(1, c));
+}
 
 //------------------------------------------------------------------------------
 bool CoreString::StartsWith(
