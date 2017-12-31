@@ -558,6 +558,9 @@ std::string CoreString::Trim(
     const std::string &str,
     const std::string &chars /* = " " */)
 {
+    if(str.empty())
+        return str;
+
     auto begin = str.find_first_not_of(chars);
     auto end   = str.find_last_not_of (chars);
 
@@ -581,5 +584,9 @@ std::string CoreString::TrimStart(
     const std::string &chars /* = " " */)
 {
     auto start = str.find_first_not_of(chars);
+
+    // All chars should be trimmed.
+    if(start == std::string::npos)
+        return "";
     return str.substr(start);
 }
