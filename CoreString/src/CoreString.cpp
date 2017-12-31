@@ -181,6 +181,7 @@ bool IsSpace(const std::string &str)
 bool CoreString::IsTitle(const std::string &str)
 {
     //COWTODO(n2omatt): implemnet...
+    return false;
 }
 
 
@@ -588,5 +589,6 @@ std::string CoreString::TrimStart(
     // All chars should be trimmed.
     if(start == std::string::npos)
         return "";
+
     return str.substr(start);
 }
