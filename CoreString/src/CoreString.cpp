@@ -570,7 +570,7 @@ std::string CoreString::TrimEnd(
     const std::string &str,
     const std::string &chars /* = " " */)
 {
-    auto end = str.find_last_not_of (chars);
+    auto end = str.find_last_not_of(chars);
     return str.substr(0, end+1);
 }
 
