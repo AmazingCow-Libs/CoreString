@@ -342,7 +342,23 @@ size_t CoreString::IndexOfAny(
     if(beginIndex + charsCount > str.size())
         charsCount = (str.size() - beginIndex);
 
-    return str.find_first_of(chars.c_str(), beginIndex, charsCount);
+    //--------------------------------------------------------------------------
+    // COWTODO(n2omatt): How we gonna check for all the characters
+    //   in the chars string but still respecting the range to be
+    //   searched in the str?
+    //
+    //   The std functions (for what I know now) doesn't provide
+    //   this functionality out of the box, so to the sake of
+    //   continue the project I'm working on a naive, and
+    //   non perfomatic approach is used now.
+    //
+    //   Fix this soon as possible.
+
+    // I'm creating a copy of string now to make the find_first_of
+    // respect the range of str. This is not OK, check the comment
+    // above.
+    auto temp = std::string(str, beginIndex, charsCount);
+    return temp.find_first_of(chars.c_str());
 }
 
 
