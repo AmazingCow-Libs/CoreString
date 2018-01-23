@@ -10,6 +10,8 @@
 #include <vector>
 // CoreString
 #include "CoreString_Utils.h"
+//
+#include "../libs/asprintf/asprintf.h"
 
 NS_CORESTRING_BEGIN
 
@@ -221,7 +223,8 @@ std::string Format(const std::string &str, Args ...args)
     if(sizeof...(args) == 0)
         return str;
 
-    asprintf(&buf, str.c_str(), Argument(args) ...);
+	// COWTODO(n2omatt): asprintf isn't standard...
+    insanecoding::asprintf(&buf, str.c_str(), Argument(args) ...);
 
     std::string ret_str(buf);
     free(buf);
