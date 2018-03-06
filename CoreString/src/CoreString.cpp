@@ -563,7 +563,12 @@ std::string CoreString::Trim(
         return str;
 
     auto begin = str.find_first_not_of(chars);
-    auto end   = str.find_last_not_of (chars);
+    if(begin == std::string::npos)
+        return "";
+
+    auto end = str.find_last_not_of (chars);
+    if(end == std::string::npos)
+        return "";
 
     return str.substr(begin, end-begin +1);
 }
