@@ -409,7 +409,8 @@ size_t CoreString::LastIndexOfAny(
     if(beginIndex + charsCount > str.size())
         charsCount = (str.size() - beginIndex);
 
-    return str.find_last_of(chars.c_str(), beginIndex, charsCount);
+    auto search_str = str.substr(beginIndex, charsCount);
+    return str.find_last_of(chars.c_str());
 }
 
 
