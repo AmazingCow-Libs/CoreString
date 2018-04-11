@@ -311,6 +311,20 @@ std::string Join(const std::string &separator, const T &first,  Args... args)
     return Join(separator, first) + Join(separator, args...);
 }
 
+template <typename Container>
+std::string Join(
+    const std::string &separator, 
+    const Container   &container) noexcept
+{
+    std::stringstream ss;
+    for(auto it = std::begin(container); it != std::end(container);) {
+        ss << (*it);
+        if(++it != std::end(container)) 
+            ss << separator;
+    }
+    return ss.str();
+}
+
 
 ///-----------------------------------------------------------------------------
 /// @brief
