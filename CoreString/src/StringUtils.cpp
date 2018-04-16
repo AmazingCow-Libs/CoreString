@@ -1,5 +1,5 @@
 // Header
-#include "../include/CoreString.h"
+#include "acow/include/StringUtils.h"
 
 
 //----------------------------------------------------------------------------//
