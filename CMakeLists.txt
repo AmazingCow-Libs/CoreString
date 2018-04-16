@@ -18,28 +18,39 @@
 ##                                                                            ##
 ##---------------------------------------------------------------------------~##
 
-
 cmake_minimum_required(VERSION 3.5)
 
-##------------------------------------------------------------------------------
-## Project Settings.
-project(CoreString)
+
+##----------------------------------------------------------------------------##
+## Project                                                                    ##
+##----------------------------------------------------------------------------##
+set(PROJECT acow_StringUtils)
+project(${PROJECT})
 
 
+##----------------------------------------------------------------------------##
+## Sources                                                                    ##
+##----------------------------------------------------------------------------##
 ##------------------------------------------------------------------------------
-## Sources.
-add_library(CoreString
-    CoreString/libs/asprintf/asprintf.cpp
-    CoreString/libs/asprintf/vasprintf-c99.cpp
-    CoreString/src/CoreString.cpp
+## Sources
+set(SOURCES
+    acow/libs/asprintf/asprintf.cpp
+    acow/libs/asprintf/vasprintf-c99.cpp
+    acow/src/StringUtils.cpp
 )
 
 
+##----------------------------------------------------------------------------##
+## Library                                                                    ##
+##----------------------------------------------------------------------------##
 ##------------------------------------------------------------------------------
-## Include directories.
-target_include_directories(CoreString PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+## Lib.
+add_library(${PROJECT} ${SOURCES})
 
+##-----------------------------------------------------------------------------
+## Include directories.
+target_include_directories(${PROJECT} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 ##------------------------------------------------------------------------------
 ## Dependencies.
-target_link_libraries(CoreString LINK_PUBLIC CoreAssert)
+target_link_libraries(${PROJECT} LINK_PUBLIC acow_c_goodies)
