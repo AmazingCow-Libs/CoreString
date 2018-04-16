@@ -1,46 +1,49 @@
 // Header
 #include "../include/CoreString.h"
-// CoreAssert
-#include "CoreAssert/CoreAssert.h"
 
 
-//------------------------------------------------------------------------------
-std::string CoreString::Capitalize(const std::string &str)
+//----------------------------------------------------------------------------//
+// Capitalize                                                                 //
+//----------------------------------------------------------------------------//
+void
+StringUtils::Capitalize_InPlace(std::string &str) noexcept
 {
-    if(str.empty())
-        return str;
+    if(str.empty()) { return; }
 
-    auto new_string = str;
-    new_string[0] = toupper(new_string[0]);
-
-    return new_string;
+    StringUtils::ToLower_InPlace(str);
+    str[0] = toupper(str[0]);
 }
 
 
-//------------------------------------------------------------------------------
-std::string CoreString::Center(
-    const std::string &str,
-    size_t             length,
-    char               c /* = ' ' */)
+//----------------------------------------------------------------------------//
+// Center                                                                     //
+//----------------------------------------------------------------------------//
+void
+StringUtils::Center_InPlace(
+    std::string &str,
+    size_t       length,
+    char         c /* = ' ' */) noexcept
 {
-    if(str.size() >= length)
-        return str;
+    if(str.size() >= length) { return; }
 
     auto total_chars = (length - str.size()) * 2;
     auto fill_str    = std::string(total_chars, c);
 
-    return fill_str + str + fill_str;
+    str.insert(str.begin(), fill_str);
+    str.push_back(fill_str);
 }
 
-
-//------------------------------------------------------------------------------
-size_t CoreString::Count(
+//----------------------------------------------------------------------------//
+// Count                                                                      //
+//----------------------------------------------------------------------------//
+size_t
+StringUtils::Count(
     const std::string &haystack,
     const std::string &needle,
     size_t             start /* = 0                 */,
-    size_t             end   /* = std::string::npos */)
+    size_t             end   /* = std::string::npos */) noexcept
 {
-    COREASSERT_ASSERT(
+    ACOW_ASSERT(
         start >= 0 && start < haystack.size(),
         "start(%d) index isn't in haystack(%s) bounds[0, %d)",
         start,
@@ -79,21 +82,27 @@ size_t CoreString::Count(
 }
 
 
-//------------------------------------------------------------------------------
-std::string CoreString::ExpandTabs(
-    const std::string &str,
-    size_t             tabSize /* = 8 */)
+//----------------------------------------------------------------------------//
+// ExpandTabs                                                                 //
+//----------------------------------------------------------------------------//
+std::string
+StringUtils::ExpandTabs_InPlace(
+    std::string &str,
+    size_t       tabSize /* = 8 */) noexcept
 {
     auto spaces = std::string(tabSize, ' ');
-    return CoreString::Replace(str, "\t", spaces);
+    StringUtils::Replace_InPlace(str, "\t", spaces);
 }
 
 
+//----------------------------------------------------------------------------//
+// Is*Something*                                                              //
+//----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-bool CoreString::IsAlNum(const std::string &str)
+bool
+StringUtils::IsAlNum(const std::string &str) noexcept
 {
-    if(str.empty())
-        return false;
+    if(str.empty()) { return false; }
 
     auto it = std::find_if_not(
         std::begin(str),
@@ -106,12 +115,11 @@ bool CoreString::IsAlNum(const std::string &str)
     return it != std::end(str);
 }
 
-
 //------------------------------------------------------------------------------
-bool CoreString::IsAlpha(const std::string &str)
+bool
+StringUtils::IsAlpha(const std::string &str) noexcept
 {
-    if(str.empty())
-        return false;
+    if(str.empty()) { return false; }
 
     auto it = std::find_if_not(
         std::begin(str),
@@ -125,10 +133,10 @@ bool CoreString::IsAlpha(const std::string &str)
 }
 
 //------------------------------------------------------------------------------
-bool IsDigit(const std::string &str)
+bool
+IsDigit(const std::string &str) noexcept
 {
-    if(str.empty())
-        return false;
+    if(str.empty()) { return false; }
 
     auto it = std::find_if_not(
         std::begin(str),
@@ -141,12 +149,11 @@ bool IsDigit(const std::string &str)
     return it != std::end(str);
 }
 
-
 //------------------------------------------------------------------------------
-bool CoreString::IsLower(const std::string &str)
+bool
+StringUtils::IsLower(const std::string &str) noexcept
 {
-    if(str.empty())
-        return false;
+    if(str.empty()) { return false; }
 
     auto it = std::find_if_not(
         std::begin(str),
@@ -160,10 +167,10 @@ bool CoreString::IsLower(const std::string &str)
 }
 
 //------------------------------------------------------------------------------
-bool IsSpace(const std::string &str)
+bool
+IsSpace(const std::string &str) noexcept
 {
-    if(str.empty())
-        return false;
+    if(str.empty()) { return false; }
 
     auto it = std::find_if_not(
         std::begin(str),
@@ -176,17 +183,30 @@ bool IsSpace(const std::string &str)
     return it != std::end(str);
 }
 
-
 //------------------------------------------------------------------------------
-bool CoreString::IsTitle(const std::string &str)
+bool
+StringUtils::IsTitle(const std::string &str) noexcept
 {
-    //COWTODO(n2omatt): implemnet...
-    return false;
+    const auto size = str.size();
+    if(size < 2) { return false; }
+
+    auto curr_upper = isupper(str[0]);
+    for(size_t i = 1; i < size; ++i) {
+        if(!isalpha(str[i]) { continue; }
+
+        if(!(curr_upper ^ isupper(str[i]))) {
+            return false;
+        } else {
+            curr_upper = !curr_upper;
+        }
+    }
+
+    return true;
 }
 
-
 //------------------------------------------------------------------------------
-bool CoreString::IsUpper(const std::string &str)
+bool
+StringUtils::IsUpper(const std::string &str) noexcept
 {
     if(str.empty())
         return false;
@@ -203,35 +223,32 @@ bool CoreString::IsUpper(const std::string &str)
 }
 
 
-//------------------------------------------------------------------------------
-std::string CoreString::SwapCase(const std::string &str)
+//----------------------------------------------------------------------------//
+// SwapCase                                                                   //
+//----------------------------------------------------------------------------//
+void
+StringUtils::SwapCase_InPlace(std::string &str) noexcept
 {
-    auto new_string = str;
     std::transform(
-        std::begin(new_string),
-        std::end(new_string),
-        std::begin(new_string),
+        std::begin(str),
+        std::end  (str),
+        std::begin(str),
         [](const char c){
             return (isupper(c)) ? tolower(c) : toupper(c);
         }
     );
-
-    return new_string;
 }
 
-
-//------------------------------------------------------------------------------
-/// @brief
-///   Return a titlecased version of S, i.e. words start with uppercase
-///   characters, all remaining cased characters have lowercase.
-std::string CoreString::Title(const std::string &str)
+//----------------------------------------------------------------------------//
+// Title                                                                      //
+//----------------------------------------------------------------------------//
+void
+StringUtils::Title_InPlace(std::string &str) noexcept
 {
-    if(str.empty())
-        return str;
+    if(str.empty()) { return false; }
 
-    auto title_str  = str;
+    // COWTODO(n2omatt): Pretty sure that this is wrong...
     auto need_upper = true;
-
     for(auto &c : title_str)
     {
         if(need_upper)
@@ -245,23 +262,19 @@ std::string CoreString::Title(const std::string &str)
         c = tolower(c);
     }
 
-    return title_str;
+    return str;
 }
 
 
 
-
-//------------------------------------------------------------------------------
-// Implemented on CoreString.h
-// template <typename T>
-// std::string Concat(const std::initializer_list<T> &list)
-
-
-//------------------------------------------------------------------------------
-bool CoreString::Contains(
+//----------------------------------------------------------------------------//
+// Contains                                                                   //
+//----------------------------------------------------------------------------//
+bool
+StringUtils::Contains(
     const std::string &haystack,
     const std::string &needle,
-    bool              caseSensitive /* = true */)
+    bool              caseSensitive /* = true */) noexcept
 {
     // Simpler case, just forward to find.
     if(caseSensitive)
@@ -275,11 +288,14 @@ bool CoreString::Contains(
 }
 
 
-//------------------------------------------------------------------------------
-bool CoreString::EndsWith(
+//----------------------------------------------------------------------------//
+// EndsWith                                                                   //
+//----------------------------------------------------------------------------//
+bool
+StringUtils::EndsWith(
     const std::string &haystack,
     const std::string &needle,
-    bool               caseSensitive /* = true */)
+    bool               caseSensitive /* = true */) noexcept
 {
     // needle cannot be contained on haystack since it's greater.
     if(haystack.size() < needle.size())
@@ -298,16 +314,15 @@ bool CoreString::EndsWith(
 }
 
 
-//Replaces one or more format items in a specified string with the string representation of a specified object.
-//Format(const std::string &, Object)
-
-
-//------------------------------------------------------------------------------
-size_t CoreString::IndexOf(
+//----------------------------------------------------------------------------//
+// IndexOf                                                                    //
+//----------------------------------------------------------------------------//
+size_t
+StringUtils::IndexOf(
     const std::string &str,
     char               c,
     size_t             beginIndex /* = 0                 */,
-    size_t             charsCount /* = std::string::npos */)
+    size_t             charsCount /* = std::string::npos */) noexcept
 {
     // Clamp the range.
     if(charsCount == std::string::npos)
@@ -331,13 +346,13 @@ size_t CoreString::IndexOf(
     return (find_it - begin_it);
 }
 
-
 //------------------------------------------------------------------------------
-size_t CoreString::IndexOfAny(
+size_t
+StringUtils::IndexOfAny(
     const std::string &str,
     const std::string &chars,
     size_t             beginIndex /* = 0                 */,
-    size_t             charsCount /* = std::string::npos */)
+    size_t             charsCount /* = std::string::npos */) noexcept
 {
     // Clamp the range.
     if(beginIndex + charsCount > str.size())
@@ -363,8 +378,11 @@ size_t CoreString::IndexOfAny(
 }
 
 
-//------------------------------------------------------------------------------
-bool CoreString::IsNullOrWhiteSpace(const std::string &str)
+//----------------------------------------------------------------------------//
+// IsNullOrWhiteSpace                                                         //
+//----------------------------------------------------------------------------//
+bool
+StringUtils::IsNullOrWhiteSpace(const std::string &str) noexcept
 {
     if(str.empty())
         return true;
@@ -373,21 +391,15 @@ bool CoreString::IsNullOrWhiteSpace(const std::string &str)
 }
 
 
-//------------------------------------------------------------------------------
-// Implemented in CoreString.h
-// template <typename T>
-// std::string Join(
-//     const std::initializer_list<T> &items,
-//     const std::string              &separator = " ")
-
-
-
-//------------------------------------------------------------------------------
-size_t CoreString::LastIndexOf(
+//----------------------------------------------------------------------------//
+// LastIndexOf                                                                //
+//----------------------------------------------------------------------------//
+size_t
+StringUtils::LastIndexOf(
     const std::string &str,
     char               c,
     size_t             beginIndex /* = 0                 */,
-    size_t             charsCount /* = std::string::npos */)
+    size_t             charsCount /* = std::string::npos */) noexcept
 {
     // Clamp the range.
     if(charsCount == std::string::npos)
@@ -399,11 +411,12 @@ size_t CoreString::LastIndexOf(
 
 
 //------------------------------------------------------------------------------
-size_t CoreString::LastIndexOfAny(
+size_t
+StringUtils::LastIndexOfAny(
     const std::string &str,
     const std::string &chars,
     size_t             beginIndex /* = 0                 */,
-    size_t             charsCount /* = std::string::npos */)
+    size_t             charsCount /* = std::string::npos */) noexcept
 {
     // Clamp the range.
     if(beginIndex + charsCount > str.size())
@@ -414,73 +427,77 @@ size_t CoreString::LastIndexOfAny(
 }
 
 
-//------------------------------------------------------------------------------
-std::string CoreString::PadLeft(
-    const std::string &str,
-    size_t             length,
-    char               c /* = ' ' */)
+//----------------------------------------------------------------------------//
+// PadLeft                                                                    //
+//----------------------------------------------------------------------------//
+std::string
+StringUtils::PadLeft_Inplace(
+    std::string &str,
+    size_t      length,
+    char        c /* = ' ' */) noexcept
 {
     // Already big enough!
-    if(str.size() >= length)
-        return str;
+    if(str.size() >= length) { return; }
 
-    return std::string(length - str.size(), c) + str;
+    auto pad = std::string(length - str.size(), c);
+    str.insert(str.begin(), pad);
 }
 
 
-//------------------------------------------------------------------------------
-std::string CoreString::PadRight(
-    const std::string &str,
-    size_t             length,
-    char               c /* = ' ' */)
+//----------------------------------------------------------------------------//
+// PadRight                                                                   //
+//----------------------------------------------------------------------------//
+std::string
+StringUtils::PadRight_Inplace(
+    std::string &str,
+    size_t       length,
+    char         c /* = ' ' */) noexcept
 {
     // Already big enough!
-    if(str.size() >= length)
-        return str;
+    if(str.size() >= length) { return; }
 
-    return str + std::string(length - str.size(), c);
+    str.push_back(std::string(length - str.size(), c));
 }
 
 
-//------------------------------------------------------------------------------
-std::string CoreString::Replace(
-    const std::string &str,
+//----------------------------------------------------------------------------//
+// Replace                                                                    //
+//----------------------------------------------------------------------------//
+void
+StringUtils::Replace(
+    std::string       &str,
     const std::string &what,
-    const std::string &to)
+    const std::string &to) noexcept
 {
-    // Make a copy, so we can modify it.
-    auto new_string = str;
-
     // Keep searching and replacing the contents of string
     // until we haven't anything to replace.
-    while(true)
-    {
-        auto index = new_string.find(what);
+    while(true) {
+        auto index = str.find(what);
 
         // We haven't found anything so there's no
         // meaning to continue searching.
         if(index == std::string::npos)
             break;
 
-        new_string.replace(index, what.size(), to);
+        str.replace(index, what.size(), to);
     }
-
-    return new_string;
 }
 
 
-//------------------------------------------------------------------------------
-std::vector<std::string> CoreString::Split(
+//----------------------------------------------------------------------------//
+// Replace                                                                    //
+//----------------------------------------------------------------------------//
+std::vector<std::string>
+StringUtils::Split(
     const std::string &str,
-    const std::string &chars)
+    const std::string &chars) noexcept
 {
     auto vec = std::vector<std::string>();
     vec.reserve(str.size() / 2);
 
     auto index     = 0UL;
     auto new_index = 0UL;
-    while(new_index != std::string::npos)
-    {
+    while(new_index != std::string::npos) {
         new_index = str.find_first_of(chars, index);
 
         auto sub_str = str.substr(index, new_index - index);
@@ -493,55 +510,61 @@ std::vector<std::string> CoreString::Split(
 }
 
 //------------------------------------------------------------------------------
-std::vector<std::string> CoreString::Split(const std::string &str, char c)
+std::vector<std::string>
+StringUtils::Split(const std::string &str, char c) noexcept
 {
-    return CoreString::Split(str, std::string(1, c));
+    return StringUtils::Split(str, std::string(1, c));
 }
 
-//------------------------------------------------------------------------------
-bool CoreString::StartsWith(
+
+//----------------------------------------------------------------------------//
+// StartsWith                                                                 //
+//----------------------------------------------------------------------------//
+bool
+StringUtils::StartsWith(
     const std::string &haystack,
     const std::string &needle,
-    bool               caseSensitive /* = true */)
+    bool               caseSensitive /* = true */) noexcept
 {
     // needle cannot be contained on haystack since it's greater.
-    if(haystack.size() < needle.size())
-        return false;
+    if(haystack.size() < needle.size()) { return false; }
 
     return std::equal(
         std::begin(haystack),
         std::begin(haystack) + needle.size(),
         std::begin(needle),
         [caseSensitive](const char &c1, const char &c2) {
-            if(caseSensitive)
+            if(caseSensitive) {
                 return c1 == c2;
+            }
             return tolower(c1) == tolower(c2);
         }
     );
 }
 
 
-//------------------------------------------------------------------------------
-std::string CoreString::ToLower(const std::string &str)
+//----------------------------------------------------------------------------//
+// ToLower                                                                    //
+//----------------------------------------------------------------------------//
+void
+StringUtils::ToLower_InPlace(std::string &str) noexcept
 {
-    auto lower_str = str;
     std::transform(
-        std::begin(lower_str),
-        std::end  (lower_str),
-        std::begin(lower_str),
+        std::begin(str),
+        std::end  (str),
+        std::begin(str),
         [](char c){
             return tolower(c);
         }
     );
-
-    return lower_str;
 }
 
-
-//------------------------------------------------------------------------------
-std::string CoreString::ToUpper(const std::string &str)
+//----------------------------------------------------------------------------//
+// ToUpper                                                                    //
+//----------------------------------------------------------------------------//
+std::string
+StringUtils::ToUpper(std::string &str) noexcept
 {
-    auto upper_str = str;
     std::transform(
         std::begin(upper_str),
         std::end  (upper_str),
@@ -550,51 +573,59 @@ std::string CoreString::ToUpper(const std::string &str)
             return toupper(c);
         }
     );
-
-    return upper_str;
 }
 
 
+//----------------------------------------------------------------------------//
+// Trim                                                                       //
+//----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-std::string CoreString::Trim(
-    const std::string &str,
-    const std::string &chars /* = " " */)
+void
+StringUtils::Trim_InPlace(
+    std::string       &str,
+    const std::string &chars /* = " " */) noexcept
 {
-    if(str.empty())
-        return str;
+    if(str.empty()) { return; }
 
     auto begin = str.find_first_not_of(chars);
-    if(begin == std::string::npos)
-        return "";
+    if(begin == std::string::npos) {
+        str = "";
+        return;
+    }
 
-    auto end = str.find_last_not_of (chars);
-    if(end == std::string::npos)
-        return "";
+    auto end = str.find_last_not_of(chars);
+    if(end == std::string::npos) {
+        str = "";
+        return;
+    }
 
-    return str.substr(begin, end-begin +1);
+    str = str.substr(begin, end-begin +1);
 }
 
 
 //------------------------------------------------------------------------------
-std::string CoreString::TrimEnd(
-    const std::string &str,
-    const std::string &chars /* = " " */)
+void
+StringUtils::TrimEnd_InPlace(
+    std::string       &str,
+    const std::string &chars /* = " " */) noexcept
 {
     auto end = str.find_last_not_of(chars);
-    return str.substr(0, end+1);
+    str = str.substr(0, end+1);
 }
 
 
-//-----------------------------------------------------------------------------
-std::string CoreString::TrimStart(
-    const std::string &str,
-    const std::string &chars /* = " " */)
+//------------------------------------------------------------------------------
+void
+StringUtils::TrimStart_InPlace(
+    std::string       &str,
+    const std::string &chars /* = " " */) noexcept
 {
     auto start = str.find_first_not_of(chars);
 
     // All chars should be trimmed.
-    if(start == std::string::npos)
-        return "";
-
-    return str.substr(start);
+    if(start == std::string::npos) {
+        str = "";
+    } else {
+        str = str.substr(start);
+    }
 }

@@ -3,19 +3,19 @@
 #pragma once
 
 // std
-#include <string>
+#include <algorithm>
 #include <initializer_list>
 #include <sstream>
-#include <algorithm>
+#include <string>
 #include <vector>
-// CoreString
-#include "CoreString_Utils.h"
-//
+// acow_StringUtils - Libs
 #include "../libs/asprintf/asprintf.h"
 
-NS_CORESTRING_BEGIN
+namespace acow { namespace StringUtils {
 
-
+//----------------------------------------------------------------------------//
+// Private Stuff                                                              //
+//----------------------------------------------------------------------------//
 namespace Private_Concat
 {
     template <typename T> std::string
@@ -55,19 +55,43 @@ namespace Private_Format
 }
 
 
+//----------------------------------------------------------------------------//
+// Capitalize                                                                 //
+//----------------------------------------------------------------------------//
+void Capitalize_InPlace(std::string &str) noexcept;
+
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return a copy of the string S with only its first character capitalized.
-std::string Capitalize(const std::string &str);
+inline std::string
+Capitalize(const std::string &str) noexcept
+{
+    auto new_str = str;
+    Capitalize_InPlace(new_str);
+    return new_str;
+}
 
+
+//----------------------------------------------------------------------------//
+// Center                                                                     //
+//----------------------------------------------------------------------------//
+void Center_InPlace(std::string &str, size_t length, char c = ' ') noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return S centered in a string of length width. Padding is
 ///   done using the specified fill character (default is a space)
-std::string Center(const std::string &str, size_t length, char c = ' ');
+inline std::string
+Center(const std::string &str, size_t length, char c = ' ') noexcept
+{
+    auto new_str = str;
+    Center_InPlace(new_str, length, c);
+    return new_str;
+}
 
-
+//----------------------------------------------------------------------------//
+// Count                                                                      //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return the number of non-overlapping occurrences of substring sub in
@@ -77,48 +101,59 @@ size_t Count(
     const std::string &haystack,
     const std::string &needle,
     size_t             start = 0,
-    size_t             end   = std::string::npos);
+    size_t             end   = std::string::npos) noexcept;
 
+
+//----------------------------------------------------------------------------//
+// ExpandTabs                                                                 //
+//----------------------------------------------------------------------------//
+void ExpandTabs_InPlace(const std::string &str, size_t tabSize = 8) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///  Return a copy of S where all tab characters are expanded using spaces.
 ///  If tabsize is not given, a tab size of 8 characters is assumed.
-std::string ExpandTabs(const std::string &str, size_t tabSize = 8);
+inline std::string
+ExpandTabs(const std::string &str, size_t tabSize = 8) noexcept
+{
+    auto new_str = str;
+    ExpandTabs_InPlace(new_str, tabSize);
+    return new_str;
+}
 
 
+//----------------------------------------------------------------------------//
+// Is*Something*                                                              //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///  Return True if all characters in S are alphanumeric
 ///  and there is at least one character in S, False otherwise.
-bool IsAlNum(const std::string &str);
-
+bool IsAlNum(const std::string &str) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return True if all characters in S are alphabetic
 ///   and there is at least one character in S, False otherwise.
-bool IsAlpha(const std::string &str);
+bool IsAlpha(const std::string &str) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return True if all characters in S are digits
 ///   and there is at least one character in S, False otherwise.
-bool IsDigit(const std::string &str);
-
+bool IsDigit(const std::string &str) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return True if all cased characters in S are lowercase and there is
 ///   at least one cased character in S, False otherwise.
-bool IsLower(const std::string &str);
+bool IsLower(const std::string &str) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return True if all characters in S are whitespace
 ///   and there is at least one character in S, False otherwise.
-bool IsSpace(const std::string &str);
-
+bool IsSpace(const std::string &str) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -126,30 +161,54 @@ bool IsSpace(const std::string &str);
 ///   character in S, i.e. uppercase characters may only follow uncased
 ///   characters and lowercase characters only cased ones. Return False
 ///   otherwise.
-bool IsTitle(const std::string &str);
-
+bool IsTitle(const std::string &str) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return True if all cased characters in S are uppercase and there is
 ///   at least one cased character in S, False otherwise.
-bool IsUpper(const std::string &str);
+bool IsUpper(const std::string &str) noexcept;
 
+
+//----------------------------------------------------------------------------//
+// SwapCase                                                                   //
+//----------------------------------------------------------------------------//
+void SwapCase_InPlace(std::string &str) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return a copy of the string S with uppercase characters
 ///   converted to lowercase and vice versa.
-std::string SwapCase(const std::string &str);
+inline std::string
+SwapCase(const std::string &str) noexcept
+{
+    auto new_str = str;
+    SwapCase_InPlace(new_str);
+    return new_str;
+}
 
+
+//----------------------------------------------------------------------------//
+// Title                                                                      //
+//----------------------------------------------------------------------------//
+void Title_InPlace(std::string &str) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Return a titlecased version of S, i.e. words start with uppercase
 ///   characters, all remaining cased characters have lowercase.
-std::string Title(const std::string &str);
+inline std::string
+Title(const std::string &str) noexcept
+{
+    auto new_str = str;
+    Title_InPlace(new_str);
+    return new_str;
+}
 
 
+//----------------------------------------------------------------------------//
+// Concat                                                                     //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Concatenates the string representations of the elements
@@ -161,13 +220,16 @@ std::string Title(const std::string &str);
 /// @note
 ///   This function use the operator << to tranform the item into the
 ///   its string representation.
-template <typename T, typename... Args>
-std::string Concat(const T& first, const Args&... args)
+template <typename T, typename... Args> std::string
+Concat(const T& first, const Args&... args) noexcept
 {
     using namespace Private_Concat;
     return Concat(first) +  Concat(args...);
 }
 
+//----------------------------------------------------------------------------//
+// Contains                                                                   //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Returns a value indicating whether a specified substring
@@ -183,9 +245,12 @@ std::string Concat(const T& first, const Args&... args)
 bool Contains(
     const std::string &haystack,
     const std::string &needle,
-    bool              caseSensitive = true);
+    bool              caseSensitive = true) noexcept;
 
 
+//----------------------------------------------------------------------------//
+// EndsWith                                                                   //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Determines whether the end of this string instance
@@ -201,17 +266,20 @@ bool Contains(
 bool EndsWith(
     const std::string &haystack,
     const std::string &needle,
-    bool               caseSensitive = true);
+    bool               caseSensitive = true) noexcept;
 
 
+//----------------------------------------------------------------------------//
+// Format                                                                     //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Replaces the format item in a specified string with the string
 ///   representation of a corresponding object in a specified array.
 /// @param fmt
 ///   The formatting string
-template <typename... Args>
-std::string Format(const std::string &str, Args ...args)
+template <typename... Args> std::string
+Format(const std::string &str, Args ...args) noexcept
 {
     using namespace Private_Format;
 
@@ -232,7 +300,9 @@ std::string Format(const std::string &str, Args ...args)
     return ret_str;
 }
 
-
+//----------------------------------------------------------------------------//
+// IndexOf                                                                    //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Reports the zero-based index of the first occurrence of the
@@ -255,8 +325,7 @@ size_t IndexOf(
     const std::string &str,
     char               c,
     size_t             beginIndex = 0,
-    size_t             charsCount   = std::string::npos);
-
+    size_t             charsCount   = std::string::npos) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -280,9 +349,12 @@ size_t IndexOfAny(
     const std::string &str,
     const std::string &chars,
     size_t             beginIndex = 0,
-    size_t             charsCount   = std::string::npos);
+    size_t             charsCount   = std::string::npos) noexcept;
 
 
+//----------------------------------------------------------------------------//
+// IsNullOrWhiteSpace                                                         //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Indicates whether a specified string is null, empty, or consists only
@@ -291,9 +363,12 @@ size_t IndexOfAny(
 ///   The string that will be queried.
 /// @returns
 ///   True if the string is empty or has only whitespaces, false otherwise.
-bool IsNullOrWhiteSpace(const std::string &str);
+bool IsNullOrWhiteSpace(const std::string &str) noexcept;
 
 
+//----------------------------------------------------------------------------//
+// Join                                                                       //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Concatenates the elements of an object array, using the specified
@@ -304,14 +379,17 @@ bool IsNullOrWhiteSpace(const std::string &str);
 ///   The first object that will be joined.
 /// @param args
 ///   The rest of objects that will be joined.
-template <typename T, typename... Args>
-std::string Join(const std::string &separator, const T &first,  Args... args)
+template <typename T, typename... Args> std::string
+Join(const std::string &separator, const T &first,  Args... args) noexcept
 {
     using namespace Private_Join;
     return Join(separator, first) + Join(separator, args...);
 }
 
 
+//----------------------------------------------------------------------------//
+// LastIndexOf                                                                //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Reports the zero-based index position of the last occurrence of a
@@ -332,8 +410,7 @@ size_t LastIndexOf(
     const std::string &str,
     char               c,
     size_t             beginIndex = 0,
-    size_t             charsCount   = std::string::npos);
-
+    size_t             charsCount   = std::string::npos) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -355,8 +432,13 @@ size_t LastIndexOfAny(
     const std::string &str,
     const std::string &chars,
     size_t             beginIndex = 0,
-    size_t             charsCount   = std::string::npos);
+    size_t             charsCount   = std::string::npos) noexcept;
 
+
+//----------------------------------------------------------------------------//
+// PadLeft                                                                    //
+//----------------------------------------------------------------------------//
+void PadLeft_InPlace(std::string &str, size_t length, char c = ' ') noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -374,8 +456,19 @@ size_t LastIndexOfAny(
 /// @note
 ///   If the length of resulting string is less than length of str
 ///   nothing will ocurr and the str will be returned as is instead.
-std::string PadLeft(const std::string &str, size_t length, char c = ' ');
+inline std::string
+PadLeft(const std::string &str, size_t length, char c = ' ') noexcept
+{
+    auto new_str = str;
+    PadLeft_InPlace(new_str, length, c);
+    return new_str;
+}
 
+
+//----------------------------------------------------------------------------//
+// PadRight                                                                   //
+//----------------------------------------------------------------------------//
+void PadRight_InPlace(std::string &str, size_t length, char c = ' ') noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -393,8 +486,22 @@ std::string PadLeft(const std::string &str, size_t length, char c = ' ');
 /// @note
 ///   If the length of resulting string is less than length of str
 ///   nothing will ocurr and the str will be returned as is instead.
-std::string PadRight(const std::string &str, size_t length, char c = ' ');
+inline std::string
+PadRight(const std::string &str, size_t length, char c = ' ') noexcept
+{
+    auto new_str = str;
+    PadRight_InPlace(new_str, length, c);
+    return new_str;
+}
 
+
+//----------------------------------------------------------------------------//
+// Replace                                                                    //
+//----------------------------------------------------------------------------//
+void Replace_InPlace(
+    std::string       &str,
+    const std::string &what,
+    const std::string &to) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -409,12 +516,21 @@ std::string PadRight(const std::string &str, size_t length, char c = ' ');
 /// @returns
 ///   The string with all 'what' strings replaced by the 'to' strings, or
 ///   the original str if any 'what' was found.
-std::string Replace(
+inline std::string
+Replace(
     const std::string &str,
     const std::string &what,
-    const std::string &to);
+    const std::string &to) noexcept
+{
+    auto new_str = str;
+    Replace_InPlace(new_str, what, to);
+    return new_str;
+}
 
 
+//----------------------------------------------------------------------------//
+// Split                                                                      //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Splits a string into substrings that are based on the
@@ -427,13 +543,17 @@ std::string Replace(
 ///   A vector of all components split.
 std::vector<std::string> Split(
     const std::string &str,
-    const std::string &chars);
+    const std::string &chars) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief Same as Split with a char array (as a string)
 /// but only with one char.
-std::vector<std::string> Split(const std::string &str, char c);
+std::vector<std::string> Split(const std::string &str, char c) noexcept;
 
+
+//----------------------------------------------------------------------------//
+// StartsWith                                                                 //
+//----------------------------------------------------------------------------//
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Determines whether the beginning of this string instance matches
@@ -449,20 +569,47 @@ std::vector<std::string> Split(const std::string &str, char c);
 bool StartsWith(
     const std::string &haystack,
     const std::string &needle,
-    bool               caseSensitive = true);
+    bool               caseSensitive = true) noexcept;
 
+
+//----------------------------------------------------------------------------//
+// ToLower                                                                    //
+//----------------------------------------------------------------------------//
+void ToLower_InPlace(std::string &str) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Returns a copy of this string converted to lowercase.
-std::string ToLower(const std::string &str);
+inline std::string
+ToLower(const std::string &str) noexcept
+{
+    auto new_str = str;
+    ToLower_InPlace(new_str);
+    return str;
+}
 
+
+//----------------------------------------------------------------------------//
+// ToUpper                                                                    //
+//----------------------------------------------------------------------------//
+void ToUpper_InPlace(std::string &str) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
 ///   Returns a copy of this string converted to uppercase.
-std::string ToUpper(const std::string &str);
+inline std::string
+ToUpper(const std::string &str) noexcept
+{
+    auto new_str = str;
+    ToUpper_InPlace(new_str);
+    return str;
+}
 
+
+//----------------------------------------------------------------------------//
+// Trim                                                                       //
+//----------------------------------------------------------------------------//
+void Trim_InPlace(std::string &str, const std::string &chars = " ") noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -474,8 +621,16 @@ std::string ToUpper(const std::string &str);
 ///   The char array (as a string) that will be trimmed (Default = " " [space]).
 /// @returns
 ///   The string without any chars at both ends.
-std::string Trim(const std::string &str, const std::string &chars = " ");
+inline std::string
+Trim(const std::string &str, const std::string &chars = " ") noexcept
+{
+    auto new_str = str;
+    Trim_InPlace(new_str);
+    return new_str;
+}
 
+
+void TrimEnd_InPlace(std::string &str, const std::string &chars = " ") noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
@@ -487,7 +642,15 @@ std::string Trim(const std::string &str, const std::string &chars = " ");
 ///   The char array (as a string) that will be trimmed (Default = " " [space]).
 /// @returns
 ///   The string without any chars at end.
-std::string TrimEnd(const std::string &str, const std::string &chars = " ");
+inline std::string
+TrimEnd(const std::string &str, const std::string &chars = " ") noexcept
+{
+    auto new_str = str;
+    TrimEnd_InPlace(new_str);
+    return new_str;
+}
+
+void TrimStart_InPlace(std::string &str, const std::string &chars = " ") noexcept;
 
 
 ///-----------------------------------------------------------------------------
@@ -500,7 +663,13 @@ std::string TrimEnd(const std::string &str, const std::string &chars = " ");
 ///   The char array (as a string) that will be trimmed (Default = " " [space]).
 /// @returns
 ///   The string without any chars at beginning.
-std::string TrimStart(const std::string &str, const std::string &chars = " ");
+inline std::string
+TrimStart(const std::string &str, const std::string &chars = " ")
+{
+    auto new_str = str;
+    TrimStart_InPlace(new_str);
+    return new_str;
+}
 
-
-NS_CORESTRING_END
+} // namespace StringUtils
+} // namespace acow
