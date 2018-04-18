@@ -53,4 +53,5 @@ target_include_directories(${PROJECT} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 ##------------------------------------------------------------------------------
 ## Dependencies.
-target_link_libraries(${PROJECT} LINK_PUBLIC acow_c_goodies)
+target_link_libraries(${PROJECT} LINK_PUBLIC acow_c_goodies  )
+target_link_libraries(${PROJECT} LINK_PUBLIC acow_cpp_goodies)
