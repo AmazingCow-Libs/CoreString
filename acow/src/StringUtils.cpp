@@ -1,5 +1,10 @@
 // Header
 #include "acow/include/StringUtils.h"
+// AmazingCow Libs
+#include "acow/cpp_goodies.h"
+
+// Usings
+using namespace acow;
 
 
 //----------------------------------------------------------------------------//
@@ -28,9 +33,9 @@ StringUtils::Center_InPlace(
 
     auto total_chars = (length - str.size()) * 2;
     auto fill_str    = std::string(total_chars, c);
-
-    str.insert(str.begin(), fill_str);
-    str.push_back(fill_str);
+    
+    str.insert(0,            fill_str);
+    str.insert(str.size()-1, fill_str);
 }
 
 //----------------------------------------------------------------------------//
@@ -65,8 +70,7 @@ StringUtils::Count(
     if(start + end >= haystack.size())
         end_index = haystack.size() - start;
 
-    while(true)
-    {
+    while(true) {
         if(start_index == std::string::npos)
             return count;
 
@@ -85,7 +89,7 @@ StringUtils::Count(
 //----------------------------------------------------------------------------//
 // ExpandTabs                                                                 //
 //----------------------------------------------------------------------------//
-std::string
+void
 StringUtils::ExpandTabs_InPlace(
     std::string &str,
     size_t       tabSize /* = 8 */) noexcept
@@ -192,7 +196,7 @@ StringUtils::IsTitle(const std::string &str) noexcept
 
     auto curr_upper = isupper(str[0]);
     for(size_t i = 1; i < size; ++i) {
-        if(!isalpha(str[i]) { continue; }
+        if(!isalpha(str[i])) { continue; }
 
         if(!(curr_upper ^ isupper(str[i]))) {
             return false;
@@ -245,11 +249,11 @@ StringUtils::SwapCase_InPlace(std::string &str) noexcept
 void
 StringUtils::Title_InPlace(std::string &str) noexcept
 {
-    if(str.empty()) { return false; }
+    if(str.empty()) { return; }
 
     // COWTODO(n2omatt): Pretty sure that this is wrong...
     auto need_upper = true;
-    for(auto &c : title_str)
+    for(auto &c : str)
     {
         if(need_upper)
         {
@@ -261,8 +265,6 @@ StringUtils::Title_InPlace(std::string &str) noexcept
 
         c = tolower(c);
     }
-
-    return str;
 }
 
 
@@ -430,8 +432,8 @@ StringUtils::LastIndexOfAny(
 //----------------------------------------------------------------------------//
 // PadLeft                                                                    //
 //----------------------------------------------------------------------------//
-std::string
-StringUtils::PadLeft_Inplace(
+void 
+StringUtils::PadLeft_InPlace(
     std::string &str,
     size_t      length,
     char        c /* = ' ' */) noexcept
@@ -440,15 +442,15 @@ StringUtils::PadLeft_Inplace(
     if(str.size() >= length) { return; }
 
     auto pad = std::string(length - str.size(), c);
-    str.insert(str.begin(), pad);
+    str.insert(0, pad);
 }
 
 
 //----------------------------------------------------------------------------//
 // PadRight                                                                   //
 //----------------------------------------------------------------------------//
-std::string
-StringUtils::PadRight_Inplace(
+void
+StringUtils::PadRight_InPlace(
     std::string &str,
     size_t       length,
     char         c /* = ' ' */) noexcept
@@ -456,7 +458,7 @@ StringUtils::PadRight_Inplace(
     // Already big enough!
     if(str.size() >= length) { return; }
 
-    str.push_back(std::string(length - str.size(), c));
+    str.insert(str.size() -1, std::string(length - str.size(), c));
 }
 
 
@@ -464,7 +466,7 @@ StringUtils::PadRight_Inplace(
 // Replace                                                                    //
 //----------------------------------------------------------------------------//
 void
-StringUtils::Replace(
+StringUtils::Replace_InPlace(
     std::string       &str,
     const std::string &what,
     const std::string &to) noexcept
@@ -562,13 +564,13 @@ StringUtils::ToLower_InPlace(std::string &str) noexcept
 //----------------------------------------------------------------------------//
 // ToUpper                                                                    //
 //----------------------------------------------------------------------------//
-std::string
-StringUtils::ToUpper(std::string &str) noexcept
+void
+StringUtils::ToUpper_InPlace(std::string &str) noexcept
 {
     std::transform(
-        std::begin(upper_str),
-        std::end  (upper_str),
-        std::begin(upper_str),
+        std::begin(str),
+        std::end  (str),
+        std::begin(str),
         [](char c){
             return toupper(c);
         }

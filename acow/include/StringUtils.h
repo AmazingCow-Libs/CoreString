@@ -107,7 +107,7 @@ size_t Count(
 //----------------------------------------------------------------------------//
 // ExpandTabs                                                                 //
 //----------------------------------------------------------------------------//
-void ExpandTabs_InPlace(const std::string &str, size_t tabSize = 8) noexcept;
+void ExpandTabs_InPlace(std::string &str, size_t tabSize = 8) noexcept;
 
 ///-----------------------------------------------------------------------------
 /// @brief
