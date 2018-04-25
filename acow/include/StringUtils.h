@@ -292,6 +292,8 @@ Format(const std::string &str, Args ...args) noexcept
         return str;
 
 	// COWTODO(n2omatt): asprintf isn't standard...
+    //  Idea: we can modify the asprintf to that the buffer of the string instead.
+    //        so we will avoid the copy.
     insanecoding::asprintf(&buf, str.c_str(), Argument(args) ...);
 
     std::string ret_str(buf);
