@@ -30,31 +30,32 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define insane_free(ptr) { free(ptr); ptr = 0; }
 
 
-int insanecoding::vasprintf(char **strp, const char *fmt, va_list ap)
+int
+insanecoding::vasprintf(char **strp, const char *fmt, va_list ap)
 {
-  int r = -1, size;
+    va_list ap2;
+    va_copy(ap2, ap);
 
-  va_list ap2;
-  va_copy(ap2, ap);
+    // Calculate how much space we needed on this buffer.
+    auto size_needed = vsnprintf(nullptr, 0, fmt, ap2);
+    auto result      = -1;
 
-  size = vsnprintf(0, 0, fmt, ap2);
-
-  if ((size >= 0) && (size < INT_MAX))
-  {
-    *strp = (char *)malloc(size+1); //+1 for null
-    if (*strp)
-    {
-      r = vsnprintf(*strp, size+1, fmt, ap);  //+1 for null
-      if ((r < 0) || (r > size))
-      {
-        insane_free(*strp);
-        r = -1;
-      }
+    if((size_needed >= 0) && (size_needed < INT_MAX)) { // Ok, we have a valid size.
+        *strp = (char *)malloc(size_needed + 1); // +1 for null
+        if(*strp) { // We could allocate memory...
+            auto chars_written = vsnprintf(*strp, size_needed+1, fmt, ap); // +1 for null
+            if(chars_written < 0) { // Error...
+                // COWTODO(n2omatt): How handle errors here??
+                insane_free(*strp);
+            } else {
+                result = chars_written;
+            }
+        }
+    } else { // Ops.. we don't have a valid size.
+        // COWTODO(n2omatt): How handle errors here???
+        *strp = nullptr;
     }
-  }
-  else { *strp = 0; }
 
-  va_end(ap2);
-
-  return(r);
+    va_end(ap2);
+    return result;
 }
