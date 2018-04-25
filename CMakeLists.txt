@@ -8,7 +8,7 @@
 ##                    |__| |__||_______||_______||__| |__|                    ##
 ##                             www.amazingcow.com                             ##
 ##  File      : CMakeLists.txt                                                ##
-##  Project   : CoreString                                                    ##
+##  Project   : acow_StringUtils                                              ##
 ##  Date      : Feb 19, 2018                                                  ##
 ##  License   : GPLv3                                                         ##
 ##  Author    : n2omatt <n2omatt@amazingcow.com>                              ##
